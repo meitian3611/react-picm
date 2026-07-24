@@ -1,0 +1,22 @@
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+a {
+  text-decoration: none;
+}
+ul {
+  list-style: none;
+  li {
+    list-style: none;
+  }
+}
+td,
+th {
+  padding: 0;
+}
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}

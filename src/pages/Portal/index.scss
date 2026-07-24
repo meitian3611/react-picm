@@ -1,0 +1,38 @@
+.icm-logo-vertical {
+  padding: 10px;
+  .lg-logo {
+    display: flex;
+    align-items: flex-end;
+    .text {
+      color: #ccc;
+      font-size: 12px;
+      margin-left: 5px;
+    }
+  }
+}
+
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 20px;
+
+  .userAvatar {
+    margin-right: 10px;
+  }
+  .dropDownsClass {
+    position: relative;
+    .title {
+      color: #999;
+      line-height: 1;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+    .drop-down {
+      cursor: pointer;
+      color: #333;
+      font-size: 14px;
+      line-height: 1;
+    }
+  }
+}
