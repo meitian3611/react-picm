@@ -6,9 +6,12 @@ import {
 } from "@ant-design/icons";
 import { Button, Dropdown, Space, Flex, Avatar, Layout, theme } from "antd";
 import type { MenuProps } from "antd";
+import useStore from "@/store";
 
 const { Header } = Layout;
+
 export default function PortalTop({ collapsed, setCollapsed }) {
+  const { userInfo } = useStore();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -42,7 +45,7 @@ export default function PortalTop({ collapsed, setCollapsed }) {
           <div className="userAvatar">
             <Avatar
               icon={<UserOutlined />}
-              src="https://rhrc.woa.com/photo/150/v_tianmei.png"
+              src={`https://rhrc.woa.com/photo/150/${userInfo.user.name}.png`}
             />
           </div>
           <div className="dropDownsClass">
@@ -50,7 +53,7 @@ export default function PortalTop({ collapsed, setCollapsed }) {
             <Dropdown menu={{ items }} trigger={["click"]}>
               <div className="drop-down">
                 <Space>
-                  v_tianmei
+                  {userInfo.user.name}
                   <DownOutlined></DownOutlined>
                 </Space>
               </div>
