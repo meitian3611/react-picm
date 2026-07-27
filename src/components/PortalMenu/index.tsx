@@ -12,6 +12,12 @@ import useMenuSelection from "@/hooks/useMenuSelection";
 
 const { Sider } = Layout;
 
+// 特殊场景 过滤列表
+const filterList = (key: string) => {
+  const arr = ["Solar_Fv_Check", "Solar_Merge_Action1"];
+  return !arr.includes(key);
+};
+
 const toMenuItems = (items: any[], depth = 0): any[] =>
   items.map((item) => ({
     key: item.code,
@@ -19,9 +25,11 @@ const toMenuItems = (items: any[], depth = 0): any[] =>
     label: item.name,
     url: item.url,
     type: item.type,
+    deepData: item.children,
     children:
       item.type === "ACTION" &&
       item.children?.length &&
+      filterList(item.code) &&
       toMenuItems(item.children, depth + 1),
   }));
 
@@ -38,6 +46,7 @@ export default function PortalMenu({ collapsed }) {
   );
 
   const menuClick = (info: { key: string }) => {
+    console.log(info);
     const url = findUrlByKey(menusMemo, info.key);
     if (url) {
       navigate(`/page/${url}`);
