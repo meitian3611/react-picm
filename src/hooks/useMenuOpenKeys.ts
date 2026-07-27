@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import type { MenuProps } from "antd";
 
 interface LevelKeysProps {
@@ -25,33 +25,37 @@ const getLevelKeys = (items: LevelKeysProps[]) => {
 /**
  * 左侧菜单的展开逻辑
  * @param menusMemo 菜单 items 数据
- * @param defaultKeys 默认展开的 key 列表
+ * @param parentKeys 当前选中项的所有父级 key（导航时自动展开）
  */
 export default function useMenuOpenKeys(
   menusMemo: LevelKeysProps[],
-  defaultKeys: string[] = [],
+  parentKeys: string[] = [],
 ) {
-  const levelKeys = useMemo(() => getLevelKeys(menusMemo), [menusMemo]);
+  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(parentKeys);
+  const [prevParentKeys, setPrevParentKeys] = useState<string[]>(parentKeys);
+  const levelKeys = getLevelKeys(menusMemo);
 
-  const [stateOpenKeys, setStateOpenKeys] = useState<string[]>(defaultKeys);
+  // 导航到新 URL 时，合并新的 parentKeys（render 时同步，无 useEffect 级联）
+  if (parentKeys !== prevParentKeys) {
+    setPrevParentKeys(parentKeys);
+    setStateOpenKeys((prev) => [...new Set([...prev, ...parentKeys])]);
+  }
 
   const onOpenChange: MenuProps["onOpenChange"] = (openKeys) => {
     const currentOpenKey = openKeys.find((key) => !stateOpenKeys.includes(key));
-    // open
     if (currentOpenKey !== undefined) {
+      // 打开一个菜单 → 同级互斥
       const repeatIndex = openKeys
         .filter((key) => key !== currentOpenKey)
         .findIndex((key) => levelKeys[key] === levelKeys[currentOpenKey]);
 
       setStateOpenKeys(
         openKeys
-          // remove repeat key
           .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
           .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey]),
       );
     } else {
-      // close
+      // 关闭一个菜单
       setStateOpenKeys(openKeys);
     }
   };

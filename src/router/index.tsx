@@ -28,6 +28,10 @@ const router = createBrowserRouter([
         path: "/page/index",
         element: lazyLoad(() => import("@/pages/Home")),
       },
+      {
+        path: "/page/accountScene",
+        element: lazyLoad(() => import("@/pages/Solar/accountScene")),
+      },
     ],
   },
   {

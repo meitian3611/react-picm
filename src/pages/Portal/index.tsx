@@ -6,6 +6,7 @@ import useStore from "@/store";
 
 import PortalMenu from "@/components/PortalMenu";
 import PortalTop from "@/components/PortalTop";
+import PortalContent from "@/components/PortalContent";
 
 const { Content, Footer } = Layout;
 
@@ -34,12 +35,14 @@ const Portal = () => {
         <Content
           style={{
             margin: "10px 10px 0",
-            padding: 10,
             background: colorBgContainer,
             borderRadius: borderRadiusLG,
           }}
         >
-          <Outlet />
+          {/* tab标签切换 */}
+          <PortalContent>
+            <Outlet />
+          </PortalContent>
         </Content>
 
         {/* 页面底部信息 */}

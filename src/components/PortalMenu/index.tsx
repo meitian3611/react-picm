@@ -1,12 +1,14 @@
 import { Menu, Layout } from "antd";
+import { useNavigate } from "react-router-dom";
 
 import { SolutionOutlined } from "@ant-design/icons";
 
 import p1Logo from "@/assets/images/p1_logo.png";
 import p2Logo from "@/assets/images/p2_logo.png";
 import useStore from "@/store";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import useMenuOpenKeys from "@/hooks/useMenuOpenKeys";
+import useMenuSelection from "@/hooks/useMenuSelection";
 
 const { Sider } = Layout;
 
@@ -15,6 +17,8 @@ const toMenuItems = (items: any[], depth = 0): any[] =>
     key: item.code,
     icon: depth == 0 && <SolutionOutlined />,
     label: item.name,
+    url: item.url,
+    type: item.type,
     children:
       item.type === "ACTION" &&
       item.children?.length &&
@@ -22,10 +26,23 @@ const toMenuItems = (items: any[], depth = 0): any[] =>
   }));
 
 export default function PortalMenu({ collapsed }) {
+  const navigate = useNavigate();
   const { menus } = useStore();
-  const [defaultSelectedKeys] = useState(["IMAS_Index"]); // 默认选中的菜单项
   const menusMemo = useMemo(() => toMenuItems(menus), [menus]); // 递归转换菜单数据
-  const { stateOpenKeys, onOpenChange } = useMenuOpenKeys(menusMemo, []); // 获取菜单的 openKeys
+
+  const { selectedKeys, parentKeys, findUrlByKey } =
+    useMenuSelection(menusMemo);
+  const { stateOpenKeys, onOpenChange } = useMenuOpenKeys(
+    menusMemo,
+    parentKeys,
+  );
+
+  const menuClick = (info: { key: string }) => {
+    const url = findUrlByKey(menusMemo, info.key);
+    if (url) {
+      navigate(`/page/${url}`);
+    }
+  };
 
   return (
     <Sider
@@ -33,6 +50,7 @@ export default function PortalMenu({ collapsed }) {
       collapsible
       collapsed={collapsed}
       width={collapsed ? 70 : 220}
+      style={{ overflow: "auto" }}
     >
       <div className="icm-logo-vertical">
         <div className="lg-logo" style={{ display: collapsed && "none" }}>
@@ -49,9 +67,10 @@ export default function PortalMenu({ collapsed }) {
       <Menu
         theme="dark"
         mode="inline"
-        defaultSelectedKeys={defaultSelectedKeys}
+        selectedKeys={selectedKeys}
         openKeys={stateOpenKeys}
         onOpenChange={onOpenChange}
+        onClick={menuClick}
         items={menusMemo}
       />
     </Sider>
