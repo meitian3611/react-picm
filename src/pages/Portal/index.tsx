@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout, theme } from "antd";
 import { Outlet } from "react-router-dom";
 import "./index.scss";
+import useStore from "@/store";
 
 import PortalMenu from "@/components/PortalMenu";
 import PortalTop from "@/components/PortalTop";
@@ -10,6 +11,12 @@ const { Content, Footer } = Layout;
 
 const Portal = () => {
   const [collapsed, setCollapsed] = useState(false); // 是否折叠
+  const { fetchUserInfo, fetchMenus } = useStore(); // 获取当前用户与菜单数据
+  useEffect(() => {
+    fetchUserInfo();
+    fetchMenus();
+  }, [fetchUserInfo, fetchMenus]);
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
