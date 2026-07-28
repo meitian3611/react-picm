@@ -29,8 +29,52 @@ const router = createBrowserRouter([
         element: lazyLoad(() => import("@/pages/Home")),
       },
       {
+        path: "/page/my-portal",
+        element: lazyLoad(() => import("@/pages/Solar/my-portal")),
+      },
+      {
+        path: "/page/fvTaskList",
+        element: lazyLoad(() => import("@/pages/Solar/fvTaskList")),
+      },
+      {
+        path: "/page/period-management",
+        element: lazyLoad(() => import("@/pages/Solar/period-management")),
+      },
+      {
         path: "/page/accountScene",
         element: lazyLoad(() => import("@/pages/Solar/accountScene")),
+      },
+      {
+        path: "/page/accountTask",
+        element: lazyLoad(() => import("@/pages/Solar/accountTask")),
+      },
+      {
+        path: "/page/accountSceneMerge",
+        element: lazyLoad(() => import("@/pages/Solar/accountSceneMerge")),
+      },
+      {
+        path: "/page/accountTaskNoCash",
+        element: lazyLoad(() => import("@/pages/Solar/accountTaskNoCash")),
+      },
+      {
+        path: "/page/listingManage",
+        element: lazyLoad(() => import("@/pages/Solar/listingManage")),
+      },
+      {
+        path: "/page/bondLedgers",
+        element: lazyLoad(() => import("@/pages/Solar/bondLedgers")),
+      },
+      {
+        path: "/page/loanLedgers",
+        element: lazyLoad(() => import("@/pages/Solar/loanLedgers")),
+      },
+      {
+        path: "/page/solarAdmin",
+        element: lazyLoad(() => import("@/pages/Solar/solarAdmin")),
+      },
+      {
+        path: "/page/periodInvestType",
+        element: lazyLoad(() => import("@/pages/Solar/periodInvestType")),
       },
     ],
   },
