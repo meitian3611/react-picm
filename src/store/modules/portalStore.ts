@@ -32,8 +32,28 @@ const userSlice: StateCreator<UserAndMenus> = (set) => ({
   // 异步获取菜单信息
   fetchMenus: async () => {
     const res = await getMenus();
+
+    // 单独修复下异常菜单
+    const arrCodes = ["Solar_Fv_Check", "Solar_Merge_Action1"];
+    const mapRes = res.data.map((item: any) => {
+      if (item.code === "IMAS_Solar") {
+        return {
+          ...item,
+          children: item.children.map((child: any) => {
+            if (arrCodes.includes(child.code)) {
+              return {
+                ...child,
+                type: "MENU",
+              };
+            }
+            return child;
+          }),
+        };
+      }
+      return item;
+    });
     set({
-      menus: res.data,
+      menus: mapRes,
     });
   },
 });

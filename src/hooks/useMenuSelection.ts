@@ -47,7 +47,7 @@ export default function useMenuSelection(menusMemo: any[]) {
     for (const item of items) {
       if (item.key === key) {
         return (
-          item.url || (item.children?.length && findFirstUrl(item.children))
+          item.url || (item.deepData?.length && findFirstUrl(item.deepData))
         );
       }
       if (item.children) {

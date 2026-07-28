@@ -12,12 +12,6 @@ import useMenuSelection from "@/hooks/useMenuSelection";
 
 const { Sider } = Layout;
 
-// 特殊场景 过滤列表
-const filterList = (key: string) => {
-  const arr = ["Solar_Fv_Check", "Solar_Merge_Action1"];
-  return !arr.includes(key);
-};
-
 const toMenuItems = (items: any[], depth = 0): any[] =>
   items.map((item) => ({
     key: item.code,
@@ -29,7 +23,6 @@ const toMenuItems = (items: any[], depth = 0): any[] =>
     children:
       item.type === "ACTION" &&
       item.children?.length &&
-      filterList(item.code) &&
       toMenuItems(item.children, depth + 1),
   }));
 
