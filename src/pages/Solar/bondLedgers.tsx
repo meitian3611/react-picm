@@ -1,3 +1,3 @@
 export default function BondLedgers() {
-  return <div>债券台账</div>;
+  return <div>Bond台账</div>;
 }

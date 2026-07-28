@@ -1,9 +1,31 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 
+// 根据 key 递归查找父级 key
+const getParentKey = (items: any[], key: string) => {
+  for (const item of items) {
+    if (item.key === key) {
+      return item.key;
+    }
+    if (item.children) {
+      const found = getParentKey(item.children, key);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
 // 根据 URL 递归查找匹配的完整 key 路径（从根到叶子）
 const findKeyPath = (items: any[], url: string): string[] => {
   for (const item of items) {
+    if (item.type === "MENU" && !item.url && item.deepData) {
+      // 特殊处理 二级菜单
+      const deepFound = findKeyPath(item.deepData, url);
+      if (deepFound.length) {
+        const fatherKey = getParentKey(items, item.key);
+        return [fatherKey];
+      }
+    }
     if (item.url === url) return [item.key];
     if (item.children) {
       const found = findKeyPath(item.children, url);

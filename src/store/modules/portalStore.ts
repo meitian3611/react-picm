@@ -1,6 +1,7 @@
 import type { StateCreator } from "zustand";
 import { getStaffInfo, getMenus } from "@/apis/common/portalApi";
 import type { UserAndMenus } from "@/types/portalStoreTypes";
+import { toMenuItems } from "@/utils/menuUtils";
 
 // StateCreator<当前模块State> —— 最简写法，后三个参数有默认值无需显式指定
 // 如需跨模块访问，可传第二个泛型: StateCreator<Test1Slice, [], [], Store>
@@ -22,6 +23,7 @@ const userSlice: StateCreator<UserAndMenus> = (set) => ({
     },
   },
   menus: [],
+  menusItems: [],
   // 异步获取用户信息
   fetchUserInfo: async () => {
     const res = await getStaffInfo();
@@ -54,6 +56,7 @@ const userSlice: StateCreator<UserAndMenus> = (set) => ({
     });
     set({
       menus: mapRes,
+      menusItems: toMenuItems(mapRes),
     });
   },
 });

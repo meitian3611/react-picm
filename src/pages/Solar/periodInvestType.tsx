@@ -1,3 +1,3 @@
 export default function PeriodInvestType() {
-  return <div>期间投资类型</div>;
+  return <div>投资类型维护</div>;
 }

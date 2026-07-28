@@ -1,46 +1,27 @@
 import { Menu, Layout } from "antd";
 import { useNavigate } from "react-router-dom";
 
-import { SolutionOutlined } from "@ant-design/icons";
-
 import p1Logo from "@/assets/images/p1_logo.png";
 import p2Logo from "@/assets/images/p2_logo.png";
 import useStore from "@/store";
-import { useMemo } from "react";
 import useMenuOpenKeys from "@/hooks/useMenuOpenKeys";
 import useMenuSelection from "@/hooks/useMenuSelection";
 
 const { Sider } = Layout;
 
-const toMenuItems = (items: any[], depth = 0): any[] =>
-  items.map((item) => ({
-    key: item.code,
-    icon: depth == 0 && <SolutionOutlined />,
-    label: item.name,
-    url: item.url,
-    type: item.type,
-    deepData: item.children,
-    children:
-      item.type === "ACTION" &&
-      item.children?.length &&
-      toMenuItems(item.children, depth + 1),
-  }));
-
 export default function PortalMenu({ collapsed }) {
   const navigate = useNavigate();
-  const { menus } = useStore();
-  const menusMemo = useMemo(() => toMenuItems(menus), [menus]); // 递归转换菜单数据
+  const { menusItems } = useStore();
 
   const { selectedKeys, parentKeys, findUrlByKey } =
-    useMenuSelection(menusMemo);
+    useMenuSelection(menusItems);
   const { stateOpenKeys, onOpenChange } = useMenuOpenKeys(
-    menusMemo,
+    menusItems,
     parentKeys,
   );
 
   const menuClick = (info: { key: string }) => {
-    console.log(info);
-    const url = findUrlByKey(menusMemo, info.key);
+    const url = findUrlByKey(menusItems, info.key);
     if (url) {
       navigate(`/page/${url}`);
     }
@@ -51,7 +32,7 @@ export default function PortalMenu({ collapsed }) {
       trigger={null}
       collapsible
       collapsed={collapsed}
-      width={collapsed ? 70 : 220}
+      width={collapsed ? 80 : 240}
       style={{ overflow: "auto" }}
     >
       <div className="icm-logo-vertical">
@@ -73,7 +54,7 @@ export default function PortalMenu({ collapsed }) {
         openKeys={stateOpenKeys}
         onOpenChange={onOpenChange}
         onClick={menuClick}
-        items={menusMemo}
+        items={menusItems}
       />
     </Sider>
   );

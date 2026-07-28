@@ -1,3 +1,3 @@
 export default function SolarAdmin() {
-  return <div>公允价值管理</div>;
+  return <div>Solar管理员工具</div>;
 }

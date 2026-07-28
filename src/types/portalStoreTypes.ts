@@ -32,6 +32,7 @@ export type Menu = {
 export interface UserAndMenus {
   userInfo: User;
   menus: Menu[];
+  menusItems: any[];
   fetchUserInfo: () => Promise<void>;
   fetchMenus: () => Promise<void>;
 }
