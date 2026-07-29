@@ -11,7 +11,7 @@ const { Sider } = Layout;
 
 export default function PortalMenu({ collapsed }) {
   const navigate = useNavigate();
-  const { menusItems } = useStore();
+  const { menusItems, addTabList } = useStore();
 
   const { selectedKeys, parentKeys, findUrlByKey } =
     useMenuSelection(menusItems);
@@ -20,10 +20,18 @@ export default function PortalMenu({ collapsed }) {
     parentKeys,
   );
 
-  const menuClick = (info: { key: string }) => {
-    const url = findUrlByKey(menusItems, info.key);
-    if (url) {
-      navigate(`/page/${url}`);
+  const menuClick = (info: any) => {
+    const { key, label, url, deepData } = info.itemData;
+    addTabList({
+      key,
+      label,
+      url,
+      deepData,
+    });
+
+    const pageUrl = findUrlByKey(menusItems, key);
+    if (pageUrl) {
+      navigate(`/page/${pageUrl}`);
     }
   };
 

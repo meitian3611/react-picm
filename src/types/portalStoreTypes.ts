@@ -40,9 +40,10 @@ export interface UserAndMenus {
 }
 
 export interface TabItems {
+  curTabInfo: any;
   activeKey: string;
   tabList: NonNullable<TabsProps["items"]>;
   setActiveKey: (key: string) => void;
-  addTabList: (tab: NonNullable<TabsProps["items"]>[number]) => void;
+  addTabList: (tab: any) => void;
   removeTabList: (key: string) => void;
 }

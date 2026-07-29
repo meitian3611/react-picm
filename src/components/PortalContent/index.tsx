@@ -5,7 +5,6 @@ export default function PortalContent({ children }) {
   const { tabList, activeKey, setActiveKey, removeTabList } = useStore();
 
   const onChange = (key: string) => {
-    console.log(key);
     setActiveKey(key);
   };
 
