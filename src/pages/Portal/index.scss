@@ -36,3 +36,14 @@
     }
   }
 }
+
+.portal-content {
+  .ant-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 0;
+      .ant-tabs-tab-icon {
+        margin-right: 5px;
+      }
+    }
+  }
+}

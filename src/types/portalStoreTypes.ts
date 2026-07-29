@@ -1,3 +1,5 @@
+import type { TabsProps } from "antd";
+
 export type User = {
   roles: any[];
   user: {
@@ -35,4 +37,12 @@ export interface UserAndMenus {
   menusItems: any[];
   fetchUserInfo: () => Promise<void>;
   fetchMenus: () => Promise<void>;
+}
+
+export interface TabItems {
+  activeKey: string;
+  tabList: NonNullable<TabsProps["items"]>;
+  setActiveKey: (key: string) => void;
+  addTabList: (tab: NonNullable<TabsProps["items"]>[number]) => void;
+  removeTabList: (key: string) => void;
 }
