@@ -79,5 +79,22 @@ export default function useMenuSelection(menusMemo: any[]) {
     }
   };
 
-  return { selectedKeys, parentKeys, findUrlByKey };
+  // 根据 url 查找对应 item - key（子页面匹配时返回 MENU 容器父级的 key）
+  const findKeyByUrl = (items: any[], url: string): string | undefined => {
+    for (const item of items) {
+      if (item.url === url) return item;
+      // MENU 容器：子页面匹配时返回容器本身的 key
+      if (item.deepData?.length) {
+        const found = findKeyByUrl(item.deepData, url);
+        if (found) return item;
+      }
+      // 常规子菜单
+      if (item.children?.length) {
+        const found = findKeyByUrl(item.children, url);
+        if (found) return found;
+      }
+    }
+  };
+
+  return { selectedKeys, parentKeys, findUrlByKey, findKeyByUrl };
 }

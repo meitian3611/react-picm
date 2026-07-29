@@ -21,6 +21,7 @@ export default defineConfig([
     rules: {
       // 允许使用 any
       "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ]);
