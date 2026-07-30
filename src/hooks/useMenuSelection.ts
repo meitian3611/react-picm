@@ -35,6 +35,45 @@ const findKeyPath = (items: any[], url: string): string[] => {
   return [];
 };
 
+// 递归查找子树中第一个有 url 的节点
+function findFirstUrl(items: any[]): string | undefined {
+  for (const item of items) {
+    if (item.url) return item.url;
+    if (item.children?.length) {
+      const found = findFirstUrl(item.children);
+      if (found) return found;
+    }
+  }
+}
+
+// 根据 key 查找对应 url（如果自身没有，则取第一个子节点的 url）
+function findUrlByKey(items: any[], key: string): string | undefined {
+  for (const item of items) {
+    if (item.key === key) {
+      return item.url || (item.deepData?.length && findFirstUrl(item.deepData));
+    }
+    if (item.children) {
+      const found = findUrlByKey(item.children, key);
+      if (found) return found;
+    }
+  }
+}
+
+// 根据 url 查找对应 item（子页面匹配时返回 MENU 容器父级）
+function findKeyByUrl(items: any[], url: string): any | undefined {
+  for (const item of items) {
+    if (item.url === url) return item;
+    if (item.deepData?.length) {
+      const found = findKeyByUrl(item.deepData, url);
+      if (found) return item;
+    }
+    if (item.children?.length) {
+      const found = findKeyByUrl(item.children, url);
+      if (found) return found;
+    }
+  }
+}
+
 /**
  * 根据当前 URL 从菜单数据中计算出选中项和父级展开项
  * @param menusMemo 转换后的菜单 items
@@ -52,49 +91,6 @@ export default function useMenuSelection(menusMemo: any[]) {
     [keyPath],
   );
   const parentKeys = useMemo(() => keyPath.slice(0, -1), [keyPath]);
-
-  // 递归查找子树中第一个有 url 的节点
-  const findFirstUrl = (items: any[]): string | undefined => {
-    for (const item of items) {
-      if (item.url) return item.url;
-      if (item.children?.length) {
-        const found = findFirstUrl(item.children);
-        if (found) return found;
-      }
-    }
-  };
-
-  // 根据 key 查找对应 url（如果自身没有，则取第一个子节点的 url）
-  const findUrlByKey = (items: any[], key: string): string | undefined => {
-    for (const item of items) {
-      if (item.key === key) {
-        return (
-          item.url || (item.deepData?.length && findFirstUrl(item.deepData))
-        );
-      }
-      if (item.children) {
-        const found = findUrlByKey(item.children, key);
-        if (found) return found;
-      }
-    }
-  };
-
-  // 根据 url 查找对应 item - key（子页面匹配时返回 MENU 容器父级的 key）
-  const findKeyByUrl = (items: any[], url: string): string | undefined => {
-    for (const item of items) {
-      if (item.url === url) return item;
-      // MENU 容器：子页面匹配时返回容器本身的 key
-      if (item.deepData?.length) {
-        const found = findKeyByUrl(item.deepData, url);
-        if (found) return item;
-      }
-      // 常规子菜单
-      if (item.children?.length) {
-        const found = findKeyByUrl(item.children, url);
-        if (found) return found;
-      }
-    }
-  };
 
   return { selectedKeys, parentKeys, findUrlByKey, findKeyByUrl };
 }

@@ -17,19 +17,18 @@ export default function PortalContent({ children }) {
   } = useStore();
   const { findKeyByUrl, findUrlByKey } = useMenuSelection(menusItems);
 
-  // 初始化时，根据当前 url 自动添加 tab
+  // 路径变化 → 创建/激活匹配的 tab
   useEffect(() => {
     const curUrl = pathname.replace("/page/", "");
     const item = findKeyByUrl(menusItems, curUrl);
-    if (item) {
-      addTabList(item);
-    }
-  }, [menusItems]);
+    if (item) addTabList(item);
+  }, [menusItems, pathname, addTabList, findKeyByUrl]);
 
+  // activeKey 变化 → 导航到对应页面
   useEffect(() => {
-    const pageUrl = findUrlByKey(menusItems, activeKey);
-    if (pageUrl) navigate(`/page/${pageUrl}`);
-  }, [activeKey, navigate]);
+    const url = findUrlByKey(menusItems, activeKey);
+    if (url) navigate(`/page/${url}`);
+  }, [activeKey, menusItems, navigate, findUrlByKey]);
 
   const onChange = (key: string) => {
     setActiveKey(key);
