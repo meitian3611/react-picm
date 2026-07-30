@@ -43,7 +43,14 @@ export interface TabItems {
   curTabInfo: any;
   activeKey: string;
   tabList: NonNullable<TabsProps["items"]>;
+  activeChildKey: string;
+  childList: NonNullable<TabsProps["items"]> | null;
   setActiveKey: (key: string) => void;
   addTabList: (tab: any) => void;
   removeTabList: (key: string) => void;
+  setChildTabs: (
+    list: NonNullable<TabsProps["items"]> | null,
+    key: string,
+  ) => void;
+  setActiveChildKey: (key: string) => void;
 }

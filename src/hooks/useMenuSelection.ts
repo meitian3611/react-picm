@@ -35,25 +35,38 @@ const findKeyPath = (items: any[], url: string): string[] => {
   return [];
 };
 
-// 递归查找子树中第一个有 url 的节点
-function findFirstUrl(items: any[]): string | undefined {
+// 递归查找子节点的 url：优先匹配 currentUrl，否则取第一个
+function findFirstUrl(items: any[], currentUrl?: string): string | undefined {
+  // 先尝试匹配当前路由对应的子节点
+  if (currentUrl) {
+    const match = items.find((item) => item.url === currentUrl);
+    if (match) return match.url;
+  }
+  // 兜底取第一个有 url 的子节点
   for (const item of items) {
     if (item.url) return item.url;
     if (item.children?.length) {
-      const found = findFirstUrl(item.children);
+      const found = findFirstUrl(item.children, currentUrl);
       if (found) return found;
     }
   }
 }
 
-// 根据 key 查找对应 url（如果自身没有，则取第一个子节点的 url）
-function findUrlByKey(items: any[], key: string): string | undefined {
+// 根据 key 查找对应 url（如果自身没有，则取子节点的 url）
+function findUrlByKey(
+  items: any[],
+  key: string,
+  currentUrl?: string,
+): string | undefined {
   for (const item of items) {
     if (item.key === key) {
-      return item.url || (item.deepData?.length && findFirstUrl(item.deepData));
+      return (
+        item.url ||
+        (item.deepData?.length && findFirstUrl(item.deepData, currentUrl))
+      );
     }
     if (item.children) {
-      const found = findUrlByKey(item.children, key);
+      const found = findUrlByKey(item.children, key, currentUrl);
       if (found) return found;
     }
   }

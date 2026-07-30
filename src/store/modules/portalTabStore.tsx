@@ -15,6 +15,9 @@ const tabSlice: StateCreator<TabItems> = (set) => ({
       url: "index",
     },
   ],
+  activeChildKey: null,
+  childList: null,
+
   setActiveKey: (key: string) =>
     set((state) => {
       const item = state.tabList.find((t) => t.key === key);
@@ -23,7 +26,7 @@ const tabSlice: StateCreator<TabItems> = (set) => ({
   addTabList: (item) =>
     set((state) => {
       const exist = state.tabList.some((t) => t.key === item.key);
-      if (exist) return { activeKey: item.key }; //当前 key 已存在，切换到该标签
+      if (exist) return { activeKey: item.key, curTabInfo: item || null }; //当前 key 已存在，切换到该标签
       return {
         tabList: [...state.tabList, item],
         activeKey: item.key,
@@ -53,6 +56,16 @@ const tabSlice: StateCreator<TabItems> = (set) => ({
       };
     });
   },
+
+  setActiveChildKey: (key: string) =>
+    set(() => {
+      return { activeChildKey: key };
+    }),
+  setChildTabs: (list, key) =>
+    set({
+      childList: list,
+      activeChildKey: key,
+    }),
 });
 
 export default tabSlice;
