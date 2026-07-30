@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import useStore from "@/store";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useMenuSelection from "@/hooks/useMenuSelection";
 
@@ -14,6 +14,7 @@ export default function PortalContent({ children }) {
     removeTabList,
     menusItems,
     addTabList,
+    curTabInfo,
   } = useStore();
   const { findKeyByUrl, findUrlByKey } = useMenuSelection(menusItems);
 
@@ -39,6 +40,17 @@ export default function PortalContent({ children }) {
       removeTabList(key);
     }
   };
+
+  // 获取当前 tab 的子 tab（deepData 可能是 false 或数组）
+  const childTabs = useMemo(() => {
+    if (!curTabInfo?.deepData?.length) return null;
+    return curTabInfo.deepData.map((item) => ({
+      key: item.key,
+      label: item.label,
+      url: item.url,
+    }));
+  }, [curTabInfo]);
+
   return (
     <div className="portal-content">
       <Tabs
@@ -50,7 +62,10 @@ export default function PortalContent({ children }) {
         onChange={onChange}
         onEdit={onEdit}
       />
-      {children}
+      <div className="portal-content-body">
+        {childTabs && <Tabs className="childTabs" items={childTabs} />}
+        {children}
+      </div>
     </div>
   );
 }

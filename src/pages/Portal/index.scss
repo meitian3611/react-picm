@@ -46,4 +46,11 @@
       }
     }
   }
+  &-body {
+    .childTabs {
+      .ant-tabs-tab {
+        padding: 8px 5px;
+      }
+    }
+  }
 }

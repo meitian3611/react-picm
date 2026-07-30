@@ -15,7 +15,11 @@ const tabSlice: StateCreator<TabItems> = (set) => ({
       url: "index",
     },
   ],
-  setActiveKey: (key: string) => set({ activeKey: key }),
+  setActiveKey: (key: string) =>
+    set((state) => {
+      const item = state.tabList.find((t) => t.key === key);
+      return { activeKey: key, curTabInfo: item || null };
+    }),
   addTabList: (item) =>
     set((state) => {
       const exist = state.tabList.some((t) => t.key === item.key);

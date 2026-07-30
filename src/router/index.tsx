@@ -53,6 +53,10 @@ const router = createBrowserRouter([
         element: lazyLoad(() => import("@/pages/Solar/accountSceneMerge")),
       },
       {
+        path: "/page/accountMergeList",
+        element: lazyLoad(() => import("@/pages/Solar/accountMergeList")),
+      },
+      {
         path: "/page/accountTaskNoCash",
         element: lazyLoad(() => import("@/pages/Solar/accountTaskNoCash")),
       },
