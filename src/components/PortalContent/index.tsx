@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import useStore from "@/store";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useMenuSelection from "@/hooks/useMenuSelection";
 
@@ -23,10 +23,7 @@ export default function PortalContent({ children }) {
 
   const { findKeyByUrl, findUrlByKey } = useMenuSelection(menusItems);
 
-  const currentUrl = useMemo(() => {
-    return pathname.replace("/page/", "");
-  }, [pathname]);
-
+  const currentUrl = pathname.replace("/page/", "");
   // 路径变化 → 创建/激活匹配的 tab
   useEffect(() => {
     const item = findKeyByUrl(menusItems, currentUrl);
@@ -85,7 +82,7 @@ export default function PortalContent({ children }) {
         onEdit={onEdit}
       />
       <div className="portal-content-body">
-        {childList && (
+        {childList?.length > 0 && (
           <Tabs
             className="childTabs"
             items={childList}
