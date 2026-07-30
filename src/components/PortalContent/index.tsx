@@ -14,7 +14,6 @@ export default function PortalContent({ children }) {
     removeTabList,
     menusItems,
     addTabList,
-    curTabInfo,
   } = useStore();
   const { findKeyByUrl, findUrlByKey } = useMenuSelection(menusItems);
 
@@ -28,23 +27,12 @@ export default function PortalContent({ children }) {
   }, [menusItems]);
 
   useEffect(() => {
-    if (!curTabInfo) return;
-    // 递归取节点本身或第一个子级的 url（兼容 MENU 容器场景）
-    const findUrl = (node: any): string | undefined => {
-      if (node.url) return node.url;
-      const sub = node.deepData;
-      return sub?.length ? findUrl(sub[0]) : undefined;
-    };
-    const url = findUrl(curTabInfo);
-    if (url) navigate(`/page/${url}`);
-  }, [curTabInfo, navigate]);
+    const pageUrl = findUrlByKey(menusItems, activeKey);
+    if (pageUrl) navigate(`/page/${pageUrl}`);
+  }, [activeKey, navigate]);
 
   const onChange = (key: string) => {
     setActiveKey(key);
-    const pageUrl = findUrlByKey(menusItems, key);
-    if (pageUrl) {
-      navigate(`/page/${pageUrl}`);
-    }
   };
 
   const onEdit = (key: string, action: string) => {
