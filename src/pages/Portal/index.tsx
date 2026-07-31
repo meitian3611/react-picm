@@ -12,7 +12,8 @@ const { Content, Footer } = Layout;
 
 const Portal = () => {
   const [collapsed, setCollapsed] = useState(false); // 是否折叠
-  const { fetchUserInfo, fetchMenus } = useStore(); // 获取当前用户与菜单数据
+  const fetchUserInfo = useStore((state) => state.fetchUserInfo); // 获取当前用户信息
+  const fetchMenus = useStore((state) => state.fetchMenus); // 获取当前菜单数据
   useEffect(() => {
     fetchUserInfo();
     fetchMenus();

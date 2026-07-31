@@ -36,7 +36,7 @@ const tabSlice: StateCreator<TabItems> = (set) => ({
   removeTabList: (key: string) => {
     set((state) => {
       const idx = state.tabList.findIndex((item) => item.key === key);
-      if (idx === -1) return; // key 不存在，不做删除操作
+      if (idx === -1) return {}; // key 不存在，不做删除操作
       const newTabList = state.tabList.filter((item) => item.key !== key);
 
       // 删除的是当前激活的标签页时，自动切换到相邻标签

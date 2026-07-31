@@ -1,10 +1,12 @@
 import { Tabs } from "antd";
+import type { TabsProps } from "antd";
 import useStore from "@/store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import type { PropsWithChildren } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useMenuSelection from "@/hooks/useMenuSelection";
 
-export default function PortalContent({ children }) {
+export default function PortalContent({ children }: PropsWithChildren) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -24,6 +26,10 @@ export default function PortalContent({ children }) {
   const { findKeyByUrl, findUrlByKey } = useMenuSelection(menusItems);
 
   const currentUrl = pathname.replace("/page/", "");
+  // 标记 activeKey 变化是否由用户操作（点 tab / 关 tab）引起，
+  // 用于区分“用户切换 tab 需导航”与“URL 变化同步 activeKey 不应导航”
+  const isUserAction = useRef(false);
+
   // 路径变化 → 创建/激活匹配的 tab
   useEffect(() => {
     const item = findKeyByUrl(menusItems, currentUrl);
@@ -32,43 +38,55 @@ export default function PortalContent({ children }) {
     }
   }, [menusItems, currentUrl, addTabList, findKeyByUrl]);
 
-  // activeKey 变化 → 导航到对应页面
+  // activeKey 变化 → 仅在用户操作（点 tab / 关 tab）时导航
+  // URL 同步引起的 activeKey 变化不导航，避免刷新/路由跳转时被错误导航回首页
   useEffect(() => {
+    if (!isUserAction.current) return;
+    isUserAction.current = false;
     const url = findUrlByKey(menusItems, activeKey, currentUrl);
-    if (url) navigate(`/page/${url}`);
-  }, [activeKey, menusItems, navigate, currentUrl, findUrlByKey]);
+    if (url && url !== currentUrl) navigate(`/page/${url}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeKey]);
 
   const onChange = (key: string) => {
+    if (key !== activeKey) {
+      isUserAction.current = true;
+    }
     setActiveKey(key);
   };
 
-  const onEdit = (key: string, action: string) => {
+  const onEdit: TabsProps["onEdit"] = (e, action) => {
     if (action === "remove") {
+      const key = e as string;
+      // 仅关闭当前激活的 tab 时才需要导航到相邻 tab
+      if (key === activeKey) {
+        isUserAction.current = true;
+      }
       removeTabList(key);
     }
   };
 
   // 获取当前 tab 的子 tab
   useEffect(() => {
-    const childList =
-      curTabInfo?.deepData?.map((item: any) => ({
+    const nextChildList =
+      curTabInfo?.deepData?.map((item) => ({
         key: item.key,
         label: item.label,
         url: item.url,
       })) ?? [];
 
-    const activeKey =
-      childList.find((item) => item.url === currentUrl)?.key ??
-      childList[0]?.key ??
+    const nextActiveKey =
+      nextChildList.find((item) => item.url === currentUrl)?.key ??
+      nextChildList[0]?.key ??
       null;
 
-    setChildTabs(childList, activeKey);
+    setChildTabs(nextChildList, nextActiveKey);
   }, [curTabInfo, currentUrl, setChildTabs]);
 
   const onChildChange = (key: string) => {
     setActiveChildKey(key);
-    const url = (childList?.find((item) => item.key === key) as any)?.url;
-    if (url) navigate(`/page/${url}`);
+    const url = childList?.find((item) => item.key === key)?.url;
+    if (url && url !== currentUrl) navigate(`/page/${url}`);
   };
 
   return (
@@ -77,16 +95,16 @@ export default function PortalContent({ children }) {
         hideAdd
         type="editable-card"
         activeKey={activeKey}
-        items={tabList}
+        items={tabList as TabsProps["items"]}
         onChange={onChange}
         onEdit={onEdit}
       />
       <div className="portal-content-body">
-        {childList?.length > 0 && (
+        {childList && childList.length > 0 && (
           <Tabs
             className="childTabs"
-            items={childList}
-            activeKey={activeChildKey}
+            items={childList as TabsProps["items"]}
+            activeKey={activeChildKey ?? ""}
             onChange={onChildChange}
           />
         )}

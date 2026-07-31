@@ -1,7 +1,22 @@
-import type { TabsProps } from "antd";
+import type { ReactNode } from "react";
 
-export type User = {
-  roles: any[];
+// 后端返回的原始菜单数据
+export interface Menu {
+  children?: Menu[];
+  code: string;
+  id: number;
+  appId: number;
+  name: string;
+  url: string;
+  type: string;
+  order: number;
+  target: string;
+  permission: string;
+  icon: string;
+}
+
+export interface User {
+  roles: unknown[];
   user: {
     bgName: string;
     bgId: number;
@@ -15,42 +30,37 @@ export type User = {
     orgId: number;
     orgName: string;
   };
-};
+}
 
-export type Menu = {
-  children: Menu[];
-  code: string;
-  id: number;
-  appId: number;
-  name: string;
-  url: string;
-  type: string;
-  order: number;
-  target: string;
-  permission: string;
-  icon: string;
-};
+// toMenuItems 转换后的菜单 / Tab 项结构（antd Menu items + 业务字段）
+export interface MenuItemConverted {
+  key: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  url?: string;
+  type?: string;
+  children?: MenuItemConverted[];
+  deepData?: MenuItemConverted[];
+  closable?: boolean;
+}
 
 export interface UserAndMenus {
   userInfo: User;
   menus: Menu[];
-  menusItems: any[];
+  menusItems: MenuItemConverted[];
   fetchUserInfo: () => Promise<void>;
   fetchMenus: () => Promise<void>;
 }
 
 export interface TabItems {
-  curTabInfo: any;
+  curTabInfo: MenuItemConverted | null;
   activeKey: string;
-  tabList: NonNullable<TabsProps["items"]>;
-  activeChildKey: string;
-  childList: NonNullable<TabsProps["items"]> | null;
+  tabList: MenuItemConverted[];
+  activeChildKey: string | null;
+  childList: MenuItemConverted[] | null;
   setActiveKey: (key: string) => void;
-  addTabList: (tab: any) => void;
+  addTabList: (tab: MenuItemConverted) => void;
   removeTabList: (key: string) => void;
-  setChildTabs: (
-    list: NonNullable<TabsProps["items"]> | null,
-    key: string,
-  ) => void;
+  setChildTabs: (list: MenuItemConverted[] | null, key: string | null) => void;
   setActiveChildKey: (key: string) => void;
 }

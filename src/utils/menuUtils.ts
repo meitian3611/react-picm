@@ -1,7 +1,8 @@
 import React from "react";
 import { SolutionOutlined } from "@ant-design/icons";
+import type { Menu, MenuItemConverted } from "@/types/portalStoreTypes";
 
-export const toMenuItems = (items: any[], depth = 0): any[] =>
+export const toMenuItems = (items: Menu[], depth = 0): MenuItemConverted[] =>
   items.map((item) => ({
     key: item.code,
     icon: depth === 0 ? React.createElement(SolutionOutlined) : undefined,
@@ -9,12 +10,14 @@ export const toMenuItems = (items: any[], depth = 0): any[] =>
     url: item.url,
     type: item.type,
     children:
-      item.type === "ACTION" &&
-      item.children?.length &&
-      toMenuItems(item.children, depth + 1),
+      item.type === "ACTION" && item.children && item.children.length > 0
+        ? toMenuItems(item.children, depth + 1)
+        : undefined,
     deepData:
       item.type === "MENU" &&
-      item.children?.length &&
-      !item.url &&
-      toMenuItems(item.children, depth + 1),
+      item.children &&
+      item.children.length > 0 &&
+      !item.url
+        ? toMenuItems(item.children, depth + 1)
+        : undefined,
   }));

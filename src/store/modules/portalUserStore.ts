@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
-import { getStaffInfo, getMenus } from "@/apis/common/portalApi";
-import type { UserAndMenus } from "@/types/portalStoreTypes";
+import { getStaffInfo, getMenus } from "@/apis";
+import type { UserAndMenus, Menu } from "@/types/portalStoreTypes";
 import { toMenuItems } from "@/utils/menuUtils";
 
 // StateCreator<当前模块State> —— 最简写法，后三个参数有默认值无需显式指定
@@ -26,22 +26,22 @@ const userSlice: StateCreator<UserAndMenus> = (set) => ({
   menusItems: [],
   // 异步获取用户信息
   fetchUserInfo: async () => {
-    const res = await getStaffInfo();
+    const data = await getStaffInfo();
     set({
-      userInfo: res.data,
+      userInfo: data,
     });
   },
   // 异步获取菜单信息
   fetchMenus: async () => {
-    const res = await getMenus();
+    const data = await getMenus();
 
     // 单独修复下异常菜单
     const arrCodes = ["Solar_Fv_Check", "Solar_Merge_Action1"];
-    const mapRes = res.data.map((item: any) => {
+    const mapRes: Menu[] = data.map((item) => {
       if (item.code === "IMAS_Solar") {
         return {
           ...item,
-          children: item.children.map((child: any) => {
+          children: (item.children ?? []).map((child) => {
             if (arrCodes.includes(child.code)) {
               return {
                 ...child,

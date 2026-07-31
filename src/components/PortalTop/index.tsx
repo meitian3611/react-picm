@@ -6,12 +6,18 @@ import {
 } from "@ant-design/icons";
 import { Button, Dropdown, Space, Flex, Avatar, Layout, theme } from "antd";
 import type { MenuProps } from "antd";
+import type { Dispatch, SetStateAction } from "react";
 import useStore from "@/store";
 
 const { Header } = Layout;
 
-export default function PortalTop({ collapsed, setCollapsed }) {
-  const { userInfo } = useStore();
+interface PortalTopProps {
+  collapsed: boolean;
+  setCollapsed: Dispatch<SetStateAction<boolean>>;
+}
+
+export default function PortalTop({ collapsed, setCollapsed }: PortalTopProps) {
+  const userInfo = useStore((state) => state.userInfo);
   const {
     token: { colorBgContainer },
   } = theme.useToken();

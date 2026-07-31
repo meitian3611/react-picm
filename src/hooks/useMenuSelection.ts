@@ -1,8 +1,12 @@
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import type { MenuItemConverted } from "@/types/portalStoreTypes";
 
 // 根据 key 递归查找父级 key
-const getParentKey = (items: any[], key: string) => {
+const getParentKey = (
+  items: MenuItemConverted[],
+  key: string,
+): string | null => {
   for (const item of items) {
     if (item.key === key) {
       return item.key;
@@ -16,14 +20,14 @@ const getParentKey = (items: any[], key: string) => {
 };
 
 // 根据 URL 递归查找匹配的完整 key 路径（从根到叶子）
-const findKeyPath = (items: any[], url: string): string[] => {
+const findKeyPath = (items: MenuItemConverted[], url: string): string[] => {
   for (const item of items) {
     if (item.type === "MENU" && !item.url && item.deepData) {
       // 特殊处理 二级菜单
       const deepFound = findKeyPath(item.deepData, url);
       if (deepFound.length) {
         const fatherKey = getParentKey(items, item.key);
-        return [fatherKey];
+        return fatherKey ? [fatherKey] : [];
       }
     }
     if (item.url === url) return [item.key];
@@ -36,7 +40,10 @@ const findKeyPath = (items: any[], url: string): string[] => {
 };
 
 // 递归查找子节点的 url：优先匹配 currentUrl，否则取第一个
-function findFirstUrl(items: any[], currentUrl?: string): string | undefined {
+function findFirstUrl(
+  items: MenuItemConverted[],
+  currentUrl?: string,
+): string | undefined {
   // 先尝试匹配当前路由对应的子节点
   if (currentUrl) {
     const match = items.find((item) => item.url === currentUrl);
@@ -50,11 +57,12 @@ function findFirstUrl(items: any[], currentUrl?: string): string | undefined {
       if (found) return found;
     }
   }
+  return undefined;
 }
 
 // 根据 key 查找对应 url（如果自身没有，则取子节点的 url）
 function findUrlByKey(
-  items: any[],
+  items: MenuItemConverted[],
   key: string,
   currentUrl?: string,
 ): string | undefined {
@@ -62,7 +70,9 @@ function findUrlByKey(
     if (item.key === key) {
       return (
         item.url ||
-        (item.deepData?.length && findFirstUrl(item.deepData, currentUrl))
+        (item.deepData?.length
+          ? findFirstUrl(item.deepData, currentUrl)
+          : undefined)
       );
     }
     if (item.children) {
@@ -70,10 +80,14 @@ function findUrlByKey(
       if (found) return found;
     }
   }
+  return undefined;
 }
 
 // 根据 url 查找对应 item（子页面匹配时返回 MENU 容器父级）
-function findKeyByUrl(items: any[], url: string): any | undefined {
+function findKeyByUrl(
+  items: MenuItemConverted[],
+  url: string,
+): MenuItemConverted | undefined {
   for (const item of items) {
     if (item.url === url) return item;
     if (item.deepData?.length) {
@@ -85,13 +99,14 @@ function findKeyByUrl(items: any[], url: string): any | undefined {
       if (found) return found;
     }
   }
+  return undefined;
 }
 
 /**
  * 根据当前 URL 从菜单数据中计算出选中项和父级展开项
  * @param menusMemo 转换后的菜单 items
  */
-export default function useMenuSelection(menusMemo: any[]) {
+export default function useMenuSelection(menusMemo: MenuItemConverted[]) {
   const { pathname } = useLocation();
 
   const curUrl = pathname.slice(6); // 去掉 "/page/" 前缀
