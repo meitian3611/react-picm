@@ -80,6 +80,14 @@ const router = createBrowserRouter([
         path: "/page/periodInvestType",
         element: lazyLoad(() => import("@/pages/Solar/periodInvestType")),
       },
+      {
+        path: "/page/solarFinalRightOs",
+        element: lazyLoad(() => import("@/pages/Solar/solarFinalRightOs")),
+      },
+      {
+        path: "/page/investmentAuxSegment",
+        element: lazyLoad(() => import("@/pages/Solar/investmentAuxSegment")),
+      },
     ],
   },
   {

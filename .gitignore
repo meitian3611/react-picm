@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# npm 本地缓存（临时安装工具时使用）
+.npm-cache
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

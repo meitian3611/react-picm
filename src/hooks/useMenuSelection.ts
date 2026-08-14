@@ -2,33 +2,14 @@ import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import type { MenuItemConverted } from "@/types/portalStoreTypes";
 
-// 根据 key 递归查找父级 key
-const getParentKey = (
-  items: MenuItemConverted[],
-  key: string,
-): string | null => {
-  for (const item of items) {
-    if (item.key === key) {
-      return item.key;
-    }
-    if (item.children) {
-      const found = getParentKey(item.children, key);
-      if (found) return found;
-    }
-  }
-  return null;
-};
-
 // 根据 URL 递归查找匹配的完整 key 路径（从根到叶子）
 const findKeyPath = (items: MenuItemConverted[], url: string): string[] => {
   for (const item of items) {
     if (item.type === "MENU" && !item.url && item.deepData) {
-      // 特殊处理 二级菜单
+      // 二级菜单容器：deepData 子页面在菜单中不可见（渲染为二级 Tab），
+      // 命中时选中容器自身即可，父级展开交给外层递归拼接
       const deepFound = findKeyPath(item.deepData, url);
-      if (deepFound.length) {
-        const fatherKey = getParentKey(items, item.key);
-        return fatherKey ? [fatherKey] : [];
-      }
+      if (deepFound.length) return [item.key];
     }
     if (item.url === url) return [item.key];
     if (item.children) {

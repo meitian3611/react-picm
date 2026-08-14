@@ -5,7 +5,7 @@ import type {
 } from "axios";
 import { message } from "antd";
 import { SUCCESS_CODE, HttpStatus } from "../constants";
-import type { ApiResponse } from "./types";
+import type { ApiResponse, RequestConfig } from "./types";
 import { BusinessError, HttpError } from "./error";
 
 /**
@@ -40,9 +40,13 @@ export function setupResponseInterceptor(instance: AxiosInstance) {
   instance.interceptors.response.use(
     (response) => {
       const res = response.data as ApiResponse;
+      // 读取调用方透传的自定义配置（showError 等）
+      const config = response.config as RequestConfig;
       // 有业务码且非成功 → 业务错误
       if (res.code !== undefined && res.code !== SUCCESS_CODE) {
-        message.error(res.message || "请求失败");
+        if (config.showError !== false) {
+          message.error(res.message || "请求失败");
+        }
         return Promise.reject(new BusinessError(res));
       }
       // 成功（含后端未返回 code 的兼容场景）：解包返回业务数据
@@ -50,6 +54,7 @@ export function setupResponseInterceptor(instance: AxiosInstance) {
     },
     (error) => {
       const status = error.response?.status;
+      const config = error.config as RequestConfig | undefined;
       const errorMsg =
         error.response?.data?.message ||
         error.message ||
@@ -57,9 +62,12 @@ export function setupResponseInterceptor(instance: AxiosInstance) {
 
       if (status === HttpStatus.UNAUTHORIZED) {
         localStorage.removeItem("token");
-        message.error("登录已过期，请重新登录");
+        // 401 提示属于网络/HTTP 类提示，受 showNetworkError 控制
+        if (config?.showNetworkError !== false) {
+          message.error("登录已过期，请重新登录");
+        }
         // window.location.href = "/login"; // 按需启用
-      } else {
+      } else if (config?.showNetworkError !== false) {
         message.error(errorMsg);
       }
 
