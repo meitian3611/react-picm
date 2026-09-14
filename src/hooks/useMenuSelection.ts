@@ -95,10 +95,11 @@ export default function useMenuSelection(menusMemo: MenuItemConverted[]) {
     () => findKeyPath(menusMemo, curUrl),
     [menusMemo, curUrl],
   );
-  const selectedKeys = useMemo(
-    () => [keyPath[keyPath.length - 1] ?? "IMAS_Index"],
-    [keyPath],
-  );
+  // 菜单外的页面（如详情页）匹配不到菜单项时，不选中任何菜单（不再回退到首页）
+  const selectedKeys = useMemo(() => {
+    const lastKey = keyPath[keyPath.length - 1];
+    return lastKey ? [lastKey] : [];
+  }, [keyPath]);
   const parentKeys = useMemo(() => keyPath.slice(0, -1), [keyPath]);
 
   return { selectedKeys, parentKeys, findUrlByKey, findKeyByUrl };

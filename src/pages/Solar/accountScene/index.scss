@@ -1,0 +1,49 @@
+.account-scene {
+  padding: 16px 16px 0;
+
+  // 搜索区域
+  &__form {
+    .ant-form-item {
+      margin-bottom: 16px;
+    }
+    .ant-form-item-control-input-content {
+      max-width: 80%;
+    }
+  }
+
+  // 日期类选择器占满所在列
+  &__picker {
+    width: 100%;
+  }
+
+  // 分割线
+  &__divider {
+    margin: 0;
+
+    &--spaced {
+      margin-bottom: 12px;
+    }
+  }
+
+  // 明细标题 + 操作按钮栏
+  &__header {
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  // 明细表格
+  &__table {
+    margin-top: 8px;
+
+    // antd 给滚动容器内联了 overflow-y: scroll（滚动条始终占位显示），
+    // 改为 auto 让内容未超出时不显示；scrollbar-gutter 预留位置避免列宽跳动
+    .ant-table-body {
+      overflow-y: auto !important;
+      scrollbar-gutter: stable;
+    }
+  }
+}
