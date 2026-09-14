@@ -1,16 +1,36 @@
-import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  useLocation,
+} from "react-router-dom";
 import { lazy, Suspense } from "react";
 
 import Portal from "@/pages/Portal";
 
+interface LazyLoadOptions {
+  /**
+   * 是否按地址栏 query 作为 key
+   * true 时「参数不同视为不同页面」：query 变化会重新挂载组件，重新触发页面加载
+   */
+  keyBySearch?: boolean;
+}
+
+/** 以地址栏 query 为 key 渲染页面，query 变化时旧实例卸载、新实例挂载 */
+function KeyedBySearch({ Component }: { Component: React.ComponentType }) {
+  const { search } = useLocation();
+  return <Component key={search} />;
+}
+
 // 封装懒加载组件
 export const lazyLoad = (
   importFn: () => Promise<{ default: React.ComponentType }>,
+  { keyBySearch = false }: LazyLoadOptions = {},
 ) => {
   const Component = lazy(importFn);
   return (
     <Suspense fallback={<Outlet />}>
-      <Component />
+      {keyBySearch ? <KeyedBySearch Component={Component} /> : <Component />}
     </Suspense>
   );
 };
@@ -46,7 +66,10 @@ const router = createBrowserRouter([
       },
       {
         path: "/page/sceneDetails",
-        element: lazyLoad(() => import("@/pages/Solar/sceneDetails")),
+        // 详情页按参数区分：query 变化时重新挂载，重新触发页面加载
+        element: lazyLoad(() => import("@/pages/Solar/sceneDetails"), {
+          keyBySearch: true,
+        }),
       },
       {
         path: "/page/accountTask",
