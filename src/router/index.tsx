@@ -1,11 +1,7 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  useLocation,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
+import KeyedBySearch from "@/components/KeyedBySearch";
 import Portal from "@/pages/Portal";
 
 interface LazyLoadOptions {
@@ -14,12 +10,6 @@ interface LazyLoadOptions {
    * true 时「参数不同视为不同页面」：query 变化会重新挂载组件，重新触发页面加载
    */
   keyBySearch?: boolean;
-}
-
-/** 以地址栏 query 为 key 渲染页面，query 变化时旧实例卸载、新实例挂载 */
-function KeyedBySearch({ Component }: { Component: React.ComponentType }) {
-  const { search } = useLocation();
-  return <Component key={search} />;
 }
 
 // 封装懒加载组件
